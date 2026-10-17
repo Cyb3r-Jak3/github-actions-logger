@@ -1,5 +1,9 @@
 # github-actions-logger
 
+![PyPI Python Version](https://img.shields.io/pypi/pyversions/github-actions-logger) ![PyPI Version](https://img.shields.io/pypi/v/github-actions-logger)
+
+
+
 A `logging.Logger` subclass that emits [GitHub Actions workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands) when running in CI, and behaves like a normal logger everywhere else.
 
 ## Installation
