@@ -64,6 +64,7 @@ jobs:
         use_oidc: true
 
     - name: Build
+      if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
         pip install wheel twine --quiet
         uv build
