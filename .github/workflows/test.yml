@@ -55,16 +55,16 @@ jobs:
         task test
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
       with:
         env_vars: OS,PYTHON
       env:
         OS: ${{ matrix.os }}
         PYTHON: ${{ matrix.python-version }}
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        use_oidc: true
 
     - name: Build
       run: |
         pip install wheel twine --quiet
-        poetry build
+        uv build
         twine check --strict dist/*
