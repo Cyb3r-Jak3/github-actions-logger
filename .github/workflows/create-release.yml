@@ -32,7 +32,7 @@ jobs:
         run: sha256sum -- *.tar.gz *.whl > SHA256SUMS
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest@v4
         with:
           subject-path: |
             dist/*.tar.gz
