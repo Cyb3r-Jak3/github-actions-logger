@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import traceback
+from typing import Self
 
 
 def is_github_actions() -> bool:
@@ -52,7 +53,7 @@ class Group:
         self.title = title
         self._in_ci = in_ci
 
-    def __enter__(self) -> "Group":
+    def __enter__(self) -> Self:
         if self._in_ci:
             sys.stdout.write(f"::group::{_escape_data(self.title)}\n")
             sys.stdout.flush()
