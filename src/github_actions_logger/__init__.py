@@ -41,6 +41,29 @@ def _exc_text(exc_info: object) -> str:
     return "".join(traceback.format_exception(*exc_info)).rstrip("\n")
 
 
+class Group:
+    """Context manager that wraps output in a collapsible log group.
+
+    Emits `::group::{title}` on entry and `::endgroup::` on exit. Does nothing
+    when not running in CI.
+    """
+
+    def __init__(self, title: str, in_ci: bool) -> None:
+        self.title = title
+        self._in_ci = in_ci
+
+    def __enter__(self) -> "Group":
+        if self._in_ci:
+            sys.stdout.write(f"::group::{_escape_data(self.title)}\n")
+            sys.stdout.flush()
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        if self._in_ci:
+            sys.stdout.write("::endgroup::\n")
+            sys.stdout.flush()
+
+
 class Logger(logging.Logger):
     """Logger that emits GitHub Actions workflow commands when running in CI.
 
@@ -73,6 +96,10 @@ class Logger(logging.Logger):
                 properties = " " + ",".join(parts)
         sys.stdout.write(f"::{command}{properties}::{_escape_data(message)}\n")
         sys.stdout.flush()
+
+    def group(self, title: str) -> Group:
+        """Return a context manager that wraps output in a collapsible log group."""
+        return Group(title, self._in_ci)
 
     def debug(self, msg: object, *args: object, **kwargs: object) -> None:
         if self._in_ci:

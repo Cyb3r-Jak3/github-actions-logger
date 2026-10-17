@@ -125,6 +125,34 @@ class TestAnnotations:
         assert capsys.readouterr().out == "::debug::m\n"
 
 
+class TestGroups:
+    def test_group_wraps_output(self, ci_logger, capsys):
+        with ci_logger.group("Build"):
+            ci_logger.info("inside")
+        assert capsys.readouterr().out == (
+            "::group::Build\n::notice::inside\n::endgroup::\n"
+        )
+
+    def test_title_escaping(self, ci_logger, capsys):
+        with ci_logger.group("100%\nnext"):
+            pass
+        assert capsys.readouterr().out == "::group::100%25%0Anext\n::endgroup::\n"
+
+    def test_endgroup_on_exception(self, ci_logger, capsys):
+        with pytest.raises(ValueError), ci_logger.group("Build"):
+            raise ValueError("boom")
+        assert capsys.readouterr().out == "::group::Build\n::endgroup::\n"
+
+    def test_as_target(self, ci_logger):
+        with ci_logger.group("Build") as group:
+            assert group.title == "Build"
+
+    def test_noop_outside_ci(self, local_logger, capsys):
+        with local_logger.group("Build"):
+            pass
+        assert capsys.readouterr().out == ""
+
+
 class TestLocal:
     @pytest.mark.parametrize(
         ("method", "level"),

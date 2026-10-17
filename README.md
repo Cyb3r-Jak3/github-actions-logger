@@ -77,6 +77,23 @@ log.warning(
 
 Missing or `None` keys and unrelated keys are ignored, and `debug` ignores them entirely since `::debug::` takes no properties. Outside CI, `extra` becomes attributes on the `LogRecord`, so a formatter can use it (for example `%(file)s:%(line)s`).
 
+### Grouping log lines
+
+`group()` returns a context manager that wraps output in a collapsible [log group](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#grouping-log-lines):
+
+```python
+with log.group("Install dependencies"):
+    log.info("Resolving...")
+```
+
+```text
+::group::Install dependencies
+::notice::Resolving...
+::endgroup::
+```
+
+`::endgroup::` is emitted even if the block raises. Outside CI, `group()` does nothing.
+
 ### Overriding detection
 
 CI detection happens once, when the logger is created. To force it on or off, pass `in_ci`:
